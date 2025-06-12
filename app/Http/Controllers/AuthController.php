@@ -74,7 +74,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $token = $user->createToken('flutter-token')->plainTextToken;
+        $token = $user->createToken('token')->plainTextToken;
 
         return response()->json([
             'user' => $user,
@@ -84,7 +84,7 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $request->validate(['email' => 'required|email', 'password' => 'required']);
+        $request->validate(['email' => 'required|email', 'password' => 'required|confirmed|min:6']);
 
         $user = User::where('email', $request->email)->first();
         if (!$user || !Hash::check($request->password, $user->password)) {
@@ -108,5 +108,33 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
         return response()->json(['message' => 'Logged out']);
+    }
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|confirmed|min:6',
+        ]);
+
+        $user = $request->user();
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json(['message' => 'Current password is incorrect'], 403);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->new_password),
+        ]);
+
+        // Optionally: revoke all tokens (force logout from other devices)
+        // $user->tokens()->delete();
+
+        return response()->json(['message' => 'Password changed successfully']);
+    }
+
+
+    public function allUser(){
+        $users = User::all();
+        return response()->json($users);
     }
 }
