@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\CartItem;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
@@ -39,27 +40,34 @@ class CartController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'quantity' => 'required|integer|min:1'
+        ]);
+
+        $cartItem = CartItem::findOrFail($id);
+
+        if ($cartItem->cart->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $cartItem->quantity = $request->quantity;
+        $cartItem->save();
+
+        return response()->json(['message' => 'Cart item updated']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Request $request,string $id)
     {
-        //
+
+        $cartItem = CartItem::findOrFail($id);
+
+        if ($cartItem->cart->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $cartItem->delete();
+        return response()->json(['message' => 'Cart item removed']);
     }
 }

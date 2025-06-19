@@ -14,6 +14,10 @@ Route::get('/all-user', [AuthController::class, 'allUser']);
 // category
 Route::get('/category', [CategoryController::class, 'index']);
 Route::post('/category', [CategoryController::class, 'store']);
+Route::get('/category/{id}/products', [CategoryController::class, 'getProductsByCategoryId']);
+Route::get('/category/slug/{slug}/products', [CategoryController::class, 'getProductsByCategorySlug']);
+Route::get('/category/search', [CategoryController::class, 'search']);
+
 
 // product
 Route::get('/product', [ProductController::class, 'index']);
@@ -27,5 +31,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/cart',[CartController::class,'store']);
     Route::get('/cart',[CartController::class,'index']);
-
+    Route::delete('/cart/{id}',[CartController::class,'destroy']);
+    Route::put('/cart/{id}',[CartController::class,'update']);
 });

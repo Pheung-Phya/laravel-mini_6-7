@@ -127,7 +127,7 @@ class AuthController extends Controller
         ]);
 
         // Optionally: revoke all tokens (force logout from other devices)
-        // $user->tokens()->delete();
+        $user->tokens()->delete();
 
         return response()->json(['message' => 'Password changed successfully']);
     }

@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 class ProductController extends Controller
 {
     public function index(){
-         $p = new Product();
+        $p = new Product();
         $products = Product::paginate(10);
 
         return response()->json($products);
