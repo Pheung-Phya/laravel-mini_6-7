@@ -18,11 +18,10 @@ Route::get('/category/{id}/products', [CategoryController::class, 'getProductsBy
 Route::get('/category/slug/{slug}/products', [CategoryController::class, 'getProductsByCategorySlug']);
 Route::get('/category/search', [CategoryController::class, 'search']);
 
-
 // product
 Route::get('/product', [ProductController::class, 'index']);
 Route::post('/product', [ProductController::class, 'store']);
-
+Route::get('/product-home', [ProductController::class, 'homeProduct']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'profile']);

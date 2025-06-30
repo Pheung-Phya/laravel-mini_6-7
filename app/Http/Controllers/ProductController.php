@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProductHome;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -16,6 +17,23 @@ class ProductController extends Controller
 
         return response()->json($products);
     }
+
+
+public function homeProduct()
+{
+    $products = Product::paginate(10);
+
+    return response()->json([
+        'data' => ProductHome::collection($products),
+        'meta' => [
+            'current_page' => $products->currentPage(),
+            'last_page' => $products->lastPage(),
+            'per_page' => $products->perPage(),
+            'total' => $products->total(),
+        ],
+    ]);
+}
+
 
     public function store(Request $request){
        $validated = $request->validate([
