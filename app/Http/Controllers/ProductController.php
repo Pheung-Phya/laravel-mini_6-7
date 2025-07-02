@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProductDetail;
 use App\Http\Resources\ProductHome;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -19,20 +20,29 @@ class ProductController extends Controller
     }
 
 
-public function homeProduct()
-{
-    $products = Product::paginate(10);
+    public function homeProduct()
+    {
+        $products = Product::paginate(10);
 
-    return response()->json([
-        'data' => ProductHome::collection($products),
-        'meta' => [
-            'current_page' => $products->currentPage(),
-            'last_page' => $products->lastPage(),
-            'per_page' => $products->perPage(),
-            'total' => $products->total(),
-        ],
-    ]);
-}
+        return response()->json([
+            'data' => ProductHome::collection($products),
+            'meta' => [
+                'current_page' => $products->currentPage(),
+                'last_page' => $products->lastPage(),
+                'per_page' => $products->perPage(),
+                'total' => $products->total(),
+            ],
+        ]);
+    }
+
+    public function show($id){
+        $product = Product::find($id);
+            if (!$product) {
+        return response()->json(['message' => 'Product not found'], 404);
+    }
+
+    return new ProductDetail($product);
+    }
 
 
     public function store(Request $request){
