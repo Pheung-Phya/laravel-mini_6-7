@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CartResource;
 use App\Models\Cart;
 use App\Models\CartItem;
 use Illuminate\Http\Request;
@@ -11,11 +12,21 @@ class CartController extends Controller
     /**
      * Display a listing of the resource.
      */
+    // public function index(Request $request)
+    // {
+    //     $cart = Cart::with('cartItem.product')->where('user_id', $request->user()->id)->first();
+    //     return response()->json($cart);
+    // }
+
     public function index(Request $request)
-    {
-        $cart = Cart::with('cartItem.product')->where('user_id', $request->user()->id)->first();
-        return response()->json($cart);
-    }
+{
+    $cart = Cart::with('cartItem.product')
+                ->where('user_id', $request->user()->id)
+                ->first();
+
+    return new CartResource($cart);
+}
+
 
     /**
      * Store a newly created resource in storage.
